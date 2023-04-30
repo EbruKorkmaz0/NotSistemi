@@ -1,0 +1,269 @@
+﻿
+@model List<NotSistemi.Models.Ogrenci>
+@model List<NotSistemi.Models.Notlar>
+@{
+    ViewBag.Title = "Öğrenci Listesi";
+}
+
+<h2>Öğrenci Listesi</h2>
+
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>id</th>
+            <th>Ad Soyad</th>
+            <th>Matematik</th>
+        </tr>
+    </thead>
+    <tbody id="tablo"></tbody>
+</table>
+
+<!--Button trigger modal-->
+<button type="button" class="btn btn-success" data-toggle="modal" data-target="#ogrenciEkleModal">
+    Ekle
+</button>
+
+<!--Modal -->
+<div class="modal fade" id="ogrenciEkleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Ekle</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="id">Ad</label>
+                        <input type="text" class="form-control" id="id" name="id" aria-describedby="emailHelp" placeholder="Sıra Giriniz.">
+                    </div>
+                    <div class="form-group">
+                        <label for="adSoyad">Ad Soyad</label>
+                        <input type="text" class="form-control" id="adSoyad" name="adSoyad" aria-describedby="emailHelp" placeholder="Adınız ve Soyadınızı Giriniz.">
+                    </div>
+                    <div class="form-group">
+                        <label for="matematik">Matematik</label>
+                        <input type="text" class="form-control" id="matematik" name="matematik" aria-describedby="emailHelp" placeholder="Notu Giriniz.">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Kapat</button>
+                    <button onclick="OgrenciEkle, NotEkle" id="btnEkle" type="button" class="btn btn-success">Kaydet</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <
+</div>
+
+<!--Button trigger modal-->
+
+<button type="button" class="btn btn-success" data-toggle="modal" data-target="#ogrenciDuzeltModal">
+
+    <!--Modal -->
+    Düzelt
+</button>
+<div class="modal fade" id="ogrenciDuzeltModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Düzelt</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="id">id</label>
+                    <input type="text" class="form-control" id="id" name="id" aria-describedby="emailHelp" placeholder="Sıranızı Giriniz.">
+                </div>
+                <div class="form-group">
+                    <label for="adSoyad">Ad Soyad</label>
+                    <input type="text" class="form-control" id="adSoyad" name="adSoyad" aria-describedby="emailHelp" placeholder="Adınız ve Soyadınız Giriniz.">
+                </div>
+                <div class="form-group">
+                    <label for="matematik">Matematik</label>
+                    <input type="text" class="form-control" id="matematik" name="matematik" aria-describedby="emailHelp" placeholder="Notu Giriniz.">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Kapat</button>
+                <button onclick="OgrenciDuzelt," id="btnDuzelt" type="button" class="btn btn-success">Kaydet</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Button trigger modal-->
+<button type="button" class="btn btn-success" data-toggle="modal" data-target="#ogrenciSilModal">
+    Sil
+</button>
+@section JSKodlari
+{
+    <script type="text/javascript">
+
+        function OgrencileriGetir() {
+            var tablo = $("#tablo");
+            tablo.empty();
+
+            $.ajax({
+                method: "GET",
+                url: "../api/HomeApiOgrenci"
+            }).done(function (response) {
+
+                if (response == null)
+                    return;
+                for (var i = 0; i < response.length; i++) {
+                    var deger = response[i];
+                    var satir = "<tr><td>" + deger.id + "</td><td>" + deger.adSoyad;
+                    tablo.append(satir);
+                }
+
+
+            }).fail(function () {
+                alert("Hata oluştu.");
+            });
+        }
+        function NotlariGetir() {
+            var tablo = $("#tablo");
+            tablo.empty();
+
+            $.ajax({
+                method: "GET",
+                url: "../api/HomeApiNotlar"
+            }).done(function (response) {
+
+                if (response == null)
+                    return;
+                for (var i = 0; i < response.length; i++) {
+                    var deger = response[i];
+                    var satir = "<tr><td>" + deger.id + "</td><td>" + deger.matematik;
+                    tablo.append(satir);
+                }
+
+
+            }).fail(function () {
+                alert("Hata oluştu.");
+            });
+        }
+
+        function NotEkle() {
+            alert("Ekle çalıştı");
+
+            var id = $("#id").val();
+            var matematik = $("#matematik").val();
+
+
+            var notlar = {
+
+                "id": id,
+                "matematik": matematik,
+
+            };
+
+            $.ajax({
+                method: "POST",
+                url: "../api/HomeApiNotlar",
+                type: "json",
+                data: notlar
+            }).done(function (response, statusText, jqXHR) {
+
+                if (jqXHR.status == 201) {
+                    alert("Not Eklendi");
+                    NotlariGetir();
+                    $("#NotEkleModal").modal("hide");
+                }
+
+                console.log(response);
+                console.log(statusText);
+                console.log(jqXHR);
+
+            }).fail(function () {
+                alert("Hata oluştu");
+            });
+        }
+
+        function OgrenciEkle() {
+            alert("Ekle çalıştı");
+
+            var id = $("#id").val();
+            var adSoyad = $("#adSoyad").val();
+
+
+            var ogrenci = {
+
+                "id": id,
+                "adSoyad": adSoyad,
+
+            };
+
+            $.ajax({
+                method: "POST",
+                url: "../api/HomeApiOgrenci",
+                type: "json",
+                data: ogrenci
+            }).done(function (response, statusText, jqXHR) {
+
+                if (jqXHR.status == 201) {
+                    alert("Öğrenci Eklendi");
+                    OgrencileriGetir();
+                    $("#ogrenciEkleModal").modal("hide");
+                }
+
+                console.log(response);
+                console.log(statusText);
+                console.log(jqXHR);
+
+            }).fail(function () {
+                alert("Hata oluştu");
+            });
+        }
+
+        function OgrenciDuzelt() {
+            //alert("Duzelt çalıştı");
+
+            var id = $("#id").val();
+            var adSoyad = $("#adSoyad").val();
+
+            var ogrenci = {
+
+                "id": id,
+                "adSoyad": adSoyad,
+            };
+
+            $.ajax({
+                method: "PUT",
+                url: "../api/HomeApiOgrenci",
+                type: "json",
+                data: ogrenci
+            }).done(function (response, statusText, jqXHR) {
+
+                if (jqXHR.status == 201) {
+                    alert("Öğrenci Düzenlendi");
+                    OgrencileriGetir();
+                    $("#ogrenciDuzenleModal").modal("hide");
+                }
+
+                console.log(response);
+                console.log(statusText);
+                console.log(jqXHR);
+
+            }).fail(function () {
+                alert("Hata oluştu");
+            });
+        }
+
+        $(function () {
+            $("#btnDuzelt").click(OgrenciDuzelt);
+        });
+
+
+    </script>
+}
+
+
+
+
